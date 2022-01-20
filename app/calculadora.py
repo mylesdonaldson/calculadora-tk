@@ -37,6 +37,21 @@ class Calculadora(object):
         OBS: É necessário importar o modulo style contido na pacote view,
              e selecionar uma de suas classes de estilo.
     """
+    """Class for creating the layout of the calculator, distribution of buttons
+    and adding its features.
+
+    The buttons distributed in the layout are as shown in the example below:
+
+        C | ( | ) | <
+        7 | 8 | 9 | x
+        4 | 5 | 6 | -
+        1 | 2 | 3 | +
+        . | 0 | = | /
+          | | ^ | √
+
+        NOTE: It is necessary to import the style module contained in the view package,
+             and select one of your style classes.
+    """
 
     def __init__(self, master):
         self.master = master
@@ -45,12 +60,14 @@ class Calculadora(object):
         self.settings = self._load_settings()
         
         # Define estilo padrão para macOS, caso seja o sistema operacional utilizado
+        # Sets default style for macOS, if it's the operating system used
         if platform.system() == 'Darwin':
             self.theme = self._get_theme('Default Theme For MacOS')
         else:
             self.theme = self._get_theme(self.settings['current_theme'])
 
         # Edição da Top-Level
+        # Top Level Master
         self.master.title('Calculadora Tk')
         self.master.maxsize(width=335, height=415)
         self.master.minsize(width=335, height=415)
@@ -58,14 +75,17 @@ class Calculadora(object):
         self.master['bg'] = self.theme['master_bg']
 
         # Área do input
+        # Input
         self._frame_input = tk.Frame(self.master, bg=self.theme['frame_bg'], pady=4)
         self._frame_input.pack()
 
         # Área dos botões
+        # Buttons
         self._frame_buttons = tk.Frame(self.master, bg=self.theme['frame_bg'], padx=2)
         self._frame_buttons.pack()
 
         # Funções de inicialização 
+        # Startup functions
         self._create_input(self._frame_input)
         self._create_buttons(self._frame_buttons)
         self._create_menu(self.master)
@@ -73,6 +93,7 @@ class Calculadora(object):
     @staticmethod
     def _load_settings():
         """Utilitário para carregar o arquivo de confirgurações da calculadora."""
+        """Utility to load the calculator settings file."""
         with open('./app/settings/settings.json', mode='r', encoding='utf-8') as f:
             settings = json_load(f)
         
@@ -80,6 +101,7 @@ class Calculadora(object):
 
     def _get_theme(self, name='Dark'):
         """Retorna as configurações de estilo para o theme especificado."""
+        """Returns the style settings for the specified theme."""
 
         list_of_themes = self.settings['themes']
 
@@ -109,11 +131,14 @@ class Calculadora(object):
         for t in self.settings['themes']:
 
             name = t['name']
-            if name in theme_incompatible:  # Ignora os temas não compatíveis.
+            # Ignora os temas não compatíveis.
+            # Ignores unsupported themes.
+            if name in theme_incompatible:  
                 continue
             else:
                 theme.add_command(label=name, command=partial(self._change_theme_to, name))
         #Configuração
+        #Configuration
         calc_menu.add_cascade(label='Configuração', menu=config)
         config.add_cascade(label='Tema', menu=theme)
 
@@ -132,6 +157,9 @@ class Calculadora(object):
         """"Metódo responsável pela criação de todos os botões da calculadora,
         indo desde adição de eventos em cada botão à distribuição no layout grid.
         """
+        """"Method responsible for creating all calculator buttons,
+        ranging from adding events on each button to distributing them on the grid layout.
+        """
 
         # Seta configurações globais (width, height font etc) no botão especificado.
         self.theme['BTN_NUMERICO'].update(self.settings['global'])
@@ -148,9 +176,11 @@ class Calculadora(object):
         self._BTN_NUM_9 = tk.Button(master, text=9, cnf=self.theme['BTN_NUMERICO'])
 
         # Seta configurações globais (width, height font etc) no botão especificado.
+        # Sets Global configurations
         self.theme['BTN_OPERADOR'].update(self.settings['global'])
 
         # Instânciação dos botões dos operadores númericos
+        # Creates instances of number operator buttons
         self._BTN_SOMA = tk.Button(master, text='+', cnf=self.theme['BTN_OPERADOR'])
         self._BTN_SUB = tk.Button(master, text='-', cnf=self.theme['BTN_OPERADOR'])
         self._BTN_DIV = tk.Button(master, text='/', cnf=self.theme['BTN_OPERADOR'])
@@ -159,10 +189,12 @@ class Calculadora(object):
         self._BTN_RAIZ = tk.Button(master, text='√', cnf=self.theme['BTN_OPERADOR'])
 
         # Seta configurações globais (width, height font etc) no botão especificado.
+        # Sets Global configurations
         self.theme['BTN_DEFAULT'].update(self.settings['global'])
         self.theme['BTN_CLEAR'].update(self.settings['global'])
 
         # Instânciação dos botões de funcionalidades da calculadora
+        # Instance of calculator feature buttons
         self._BTN_ABRE_PARENTESE = tk.Button(master, text='(', cnf=self.theme['BTN_DEFAULT'])
         self._BTN_FECHA_PARENTESE = tk.Button(master, text=')', cnf=self.theme['BTN_DEFAULT'])
         self._BTN_CLEAR = tk.Button(master, text='C', cnf=self.theme['BTN_DEFAULT'])
@@ -171,23 +203,28 @@ class Calculadora(object):
         self._BTN_DOT = tk.Button(master, text='.', cnf=self.theme['BTN_DEFAULT'])
 
         # Instânciação dos botões vazios, para futura implementação
+        # Instantiation of empty buttons, for future implementation
         self._BTN_VAZIO1 = tk.Button(master, text='', cnf=self.theme['BTN_OPERADOR'])
         self._BTN_VAZIO2 = tk.Button(master, text='', cnf=self.theme['BTN_OPERADOR'])
 
         # Distribuição dos botões em um gerenciador de layout grid
         # Linha 0
+        # Distribution of buttons in a grid layout manager
+        # Line 0
         self._BTN_CLEAR.grid(row=0, column=0, padx=1, pady=1)
         self._BTN_ABRE_PARENTESE.grid(row=0, column=1, padx=1, pady=1)
         self._BTN_FECHA_PARENTESE.grid(row=0, column=2, padx=1, pady=1)
         self._BTN_DEL.grid(row=0, column=3, padx=1, pady=1)
 
         # Linha 1
+        # Line 1
         self._BTN_NUM_7.grid(row=1, column=0, padx=1, pady=1)
         self._BTN_NUM_8.grid(row=1, column=1, padx=1, pady=1)
         self._BTN_NUM_9.grid(row=1, column=2, padx=1, pady=1)
         self._BTN_MULT.grid(row=1, column=3, padx=1, pady=1)
 
         # Linha 2
+        # Line 2
         self._BTN_NUM_4.grid(row=2, column=0, padx=1, pady=1)
         self._BTN_NUM_5.grid(row=2, column=1, padx=1, pady=1)
         self._BTN_NUM_6.grid(row=2, column=2, padx=1, pady=1)
@@ -212,6 +249,7 @@ class Calculadora(object):
         self._BTN_RAIZ.grid(row=5, column=3, padx=1, pady=1)
 
         # Eventos dos botões númericos
+        # Button Number events
         self._BTN_NUM_0['command'] = partial(self._set_values_in_input, 0)
         self._BTN_NUM_1['command'] = partial(self._set_values_in_input, 1)
         self._BTN_NUM_2['command'] = partial(self._set_values_in_input, 2)
@@ -224,6 +262,7 @@ class Calculadora(object):
         self._BTN_NUM_9['command'] = partial(self._set_values_in_input, 9)
 
         # Eventos dos botões de operação matemática
+        # Button Math operator events
         self._BTN_SOMA['command'] = partial(self._set_operator_in_input, '+')
         self._BTN_SUB['command'] = partial(self._set_operator_in_input, '-')
         self._BTN_MULT['command'] = partial(self._set_operator_in_input, '*')
@@ -233,6 +272,7 @@ class Calculadora(object):
 
 
         # Eventos dos botões de funcionalidades da calculadora
+        # Calculator Feature Buttons
         self._BTN_DOT['command'] = partial(self._set_dot_in_input, '.')
         self._BTN_ABRE_PARENTESE['command'] = self._set_open_parent
         self._BTN_FECHA_PARENTESE['command'] = self._set_close_parent
@@ -242,6 +282,8 @@ class Calculadora(object):
 
     def _set_values_in_input(self, value):
         """Metódo responsável por captar o valor númerico clicado e setar no input"""
+        """Method responsible for capturing the numerical value clicked and setting the input"""
+        
         if self._entrada.get() == 'Erro':
             self._entrada.delete(0, len(self._entrada.get()))
 
@@ -253,6 +295,7 @@ class Calculadora(object):
     
     def _set_dot_in_input(self, dot):
         """Metódo responsável por setar o ponto de separação decimal no valor"""
+        """Method responsible for setting the decimal point in the value"""
         if self._entrada.get() == 'Erro':
             return 
 
@@ -261,6 +304,7 @@ class Calculadora(object):
 
     def _set_open_parent(self):
         """Metódo para setar a abertura de parenteses no input"""
+        """Method to set the opening of parentheses in the input"""
         if self._entrada.get() == 'Erro':
             return 
 
@@ -272,6 +316,7 @@ class Calculadora(object):
     
     def _set_close_parent(self):
         """Metódo para setar o fechamento de parenteses no input"""
+        """Method to set the closing of parentheses in the input"""
         if self._entrada.get() == 'Erro':
             return
 
@@ -282,11 +327,13 @@ class Calculadora(object):
 
     def _clear_input(self):
         """Reseta o input da calculadora, limpando-o por completo e inserindo o valor 0"""
+        """Resets the calculator input, clearing it completely and entering the value 0"""
         self._entrada.delete(0, len(self._entrada.get()))
         self._entrada.insert(0,0)
     
     def _del_last_value_in_input(self):
         """Apaga o último digito contido dentro do input"""
+        """Erases the last digit contained within the input"""
         if self._entrada.get() == 'Erro':
             return
 
@@ -298,6 +345,7 @@ class Calculadora(object):
     
     def _set_operator_in_input(self, operator):
         """Metódo responsável por captar o operador matemático clicado e setar no input"""
+        """Method responsible for capturing the clicked mathematical operator and setting the input"""
         if self._entrada.get() == 'Erro':
             return
 
@@ -311,6 +359,8 @@ class Calculadora(object):
     def _get_data_in_input(self):
         """Pega os dados com todas as operações contidos dentro do input
         para realizar o calculo"""
+        """Get the data with all operations contained within the input
+        to perform the calculation"""
         if self._entrada.get() == 'Erro':
             return
 
@@ -319,6 +369,7 @@ class Calculadora(object):
 
     def _set_result_in_input(self, result=0):
         """Seta o resultado de toda a operação dentro do input"""
+        """Set the result of the entire operation inside the input"""
         if self._entrada.get() == 'Erro':
             return
 
@@ -327,17 +378,19 @@ class Calculadora(object):
 
     def _lenght_max(self, data_in_input):
         """Para verificar se o input atingiu a quantidade de caracteres máxima"""
+        """To check if the input has reached the maximum number of characters"""
         if len(str(data_in_input)) >= 15:
             return False
         return True
             
     def start(self):
-        print('\33[92mCalculadora Tk Iniciada. . .\33[m\n')
+        print('\33[92mCalculadora Tk Iniciada. . .]\33\n')
         self.master.mainloop()
     
-    def _realod_app(self):
-        """Reinicia o aplicativo."""
-        python = sys.executable  # Recupera o path do executável do python
+    def _reload_app(self):
+        """Reinicia o aplicativo and recupera o path do executável do python """
+        """Restart the Calculator and retrieve path of executable"""
+        python = sys.executable 
         os.execl(python, python, * sys.argv)
 
     def _exit(self):
